@@ -1,0 +1,28 @@
+remember to strip strings going into parser
+
+match tag name (?<=<)[^\s|>]*
+uses negative look behind to make sure < is used for match but isnt returned
+then looks for any number of characters immediately following and stops when it hits a space or >
+example: <p class='foo bar' id='baz' name='fozzie'>
+returns p
+
+strip tag name and < and >
+
+match attributes and their values \w*[=\s]+['|"][\w\s]+['|"]
+first grab any number of word characters, followed by any number of spaces and an = sign, followed by single or double quotes, followed by any number of words and spaces, followed by a single or double quote
+example: class='foo bar' id='baz' name='fozzie'
+returns 
+class='foo bar' 
+id='baz' 
+name='fozzie'
+
+match attribute name ^\w.*?(?=\s|=)
+only at the start of the line (^) look for any number of word characters followed by a space or equal sign
+example: class='foo bar'
+returns class
+
+match attribute values ['|"](.*?)['|"]
+look for any single quote or double quote, return everything in between up until another single or double quote
+example class='foo bar'
+returns foo bar
+just split(“ “) into an array
