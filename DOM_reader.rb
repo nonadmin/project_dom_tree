@@ -78,9 +78,9 @@ class DOMReader
         if same_tags_at_start_of_data?(raw_tag) &&
            nested_same_tag?(child.name.to_s, raw_tag)
           # dealing with nested and consecutive tags
-          raw_data = get_instance_of_tag(child.name.to_s, raw_tag, true)
+          raw_data = get_instance_of_tag(child.name, raw_tag, true)
         else
-          raw_data = get_instance_of_tag(child.name.to_s, raw_tag)
+          raw_data = get_instance_of_tag(child.name, raw_tag)
         end
         child.raw_data = raw_data[1]
 
