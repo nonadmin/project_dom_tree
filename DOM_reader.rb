@@ -7,7 +7,7 @@
 # "raw data" set by its parent.  This raw data is everything contained within its
 # opening and closing tags.  As the tree is built we process this data twice.
 # Once to seperate non-HTML text from the child tags of the node.  And then again
-# For each child node the data is chunked even smaller, to setup the raw_data
+# for each child node the data is chunked even smaller, to setup the raw_data
 # of the child's children. 
 
 # High Level Pseudocode
@@ -47,7 +47,6 @@ class DOMReader
 
 
   def build_tree(html_file)
-
     setup_root(html_file)
     queue = [@root]
 
@@ -73,7 +72,6 @@ class DOMReader
         child.name = child_attr[:name]
         child.id = child_attr[:id]
         child.classes = child_attr[:classes]
-
         child.parent = node
 
         # now we setup the child's raw data
@@ -96,15 +94,6 @@ class DOMReader
     end
 
     @root
-   
   end
 
 end
-
-# sample code
-# d = DOMReader.new
-# tree = d.build_tree('test.html');
-# searcher = TreeSearcher.new(tree);
-# node = searcher.search_by(:name, "div");
-# renderer = NodeRenderer.new(tree);
-# renderer.render(node[1])

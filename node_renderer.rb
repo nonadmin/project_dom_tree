@@ -33,8 +33,6 @@ class NodeRenderer
     end
 
     print "\n"
-
-    
   end
 
 
@@ -47,23 +45,22 @@ class NodeRenderer
       end
     end
       
-    sub_nodes = {:count => 0, :types => {}}
-    sub_nodes[:types].default = 0
+    sub_notes_stats = {:count => 0, :types => {}}
+    sub_notes_stats[:types].default = 0
 
     until queue.empty?
 
       current_node = queue.shift
 
-      sub_nodes[:count] += 1
+      sub_notes_stats[:count] += 1
       element = current_node.name.to_sym
-      sub_nodes[:types][element] += 1           
+      sub_notes_stats[:types][element] += 1           
 
       queue += current_node.children
 
     end
 
-    sub_nodes
-    
+    sub_notes_stats
   end
   
   

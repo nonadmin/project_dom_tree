@@ -18,7 +18,6 @@ module TagParser
     tag_data[:id] = tag_data[:id].join if tag_data[:id]
     tag_data[:classes] = tag_data.delete(:class) if tag_data.has_key?(:class)
     tag_data
-
   end
 
 

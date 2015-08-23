@@ -1,28 +1,34 @@
 require_relative 'node_renderer'
+system 'clear'
 
 # sample code
 d = DOMReader.new
 tree = d.build_tree('test.html');
 searcher = TreeSearcher.new(tree);
-search_one = searcher.search_by(:name, "div");
-search_two = searcher.search_by(:classes, "bold");
-search_three = searcher.search_by(:id, "main-area");
 
-search_four = searcher.search_by(:name, "em");
-search_five = searcher.search_ancestors(search_four[0], :classes, "silly")
+name_search = searcher.search_by(:name, "div");
+class_search = searcher.search_by(:classes, "bold");
+id_search = searcher.search_by(:id, "main-area");
 
-search_six = searcher.search_by(:name, "main");
-search_seven = searcher.search_descendents(search_six[0], :classes, "silly")
+temp = searcher.search_by(:name, "em");
+ancestor_search = searcher.search_ancestors(temp[0], :classes, "silly")
 
-search_eight = searcher.search_by(:name, "main");
-search_nine = searcher.search_descendents(search_eight[0], :classes, /fun/)
+temp = searcher.search_by(:name, "main");
+descendents_search = searcher.search_descendents(temp[0], :classes, "silly")
+
+temp = searcher.search_by(:name, "main");
+regex_search = searcher.search_descendents(temp[0], :classes, /fun/)
 
 renderer = NodeRenderer.new(tree);
+
+#render base tree
 renderer.render
-renderer.render(search_one[0])
-renderer.render(search_one[1])
-renderer.render(search_two[0])
-renderer.render(search_three[0])
-renderer.render(search_five[0])
-renderer.render(search_seven[0])
-renderer.render(search_nine[0])
+
+#render test searches from above
+renderer.render(name_search[0])
+renderer.render(name_search[1])
+renderer.render(class_search[0])
+renderer.render(id_search[0])
+renderer.render(ancestor_search[0])
+renderer.render(descendents_search[0])
+renderer.render(regex_search[0])
