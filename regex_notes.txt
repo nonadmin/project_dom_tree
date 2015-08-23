@@ -26,3 +26,26 @@ look for any single quote or double quote, return everything in between up until
 example class='foo bar'
 returns foo bar
 just split(“ “) into an array
+
+
+
+/<\s*head[^>]*>(.*?)<\s*\/\s*head>/m
+match result is entire thing, match group is data
+
+/<\s*\w.*?>/
+get all start tags and attributes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
