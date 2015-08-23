@@ -28,9 +28,9 @@
 ## 12. Clear the raw child tags off the parent
 # 13. Loop
 
-require_relative 'tag_parser.rb'
+require_relative 'tag_parser'
 
-Node = Struct.new(:name, :text, :classes, :id, :children, :parent, :raw_data, 
+Node = Struct.new(:name, :data, :classes, :id, :children, :parent, :raw_data, 
                   :raw_child_tags)
 
 class DOMReader
@@ -40,7 +40,7 @@ class DOMReader
   def setup_root(html_file)
     raw_html = File.read(html_file)
     @root = Node.new
-    @root.name = :html
+    @root.name = "html"
     trimmed_html = get_instance_of_tag("html", raw_html)
     @root.raw_data = trimmed_html[1]
   end
@@ -98,6 +98,13 @@ class DOMReader
     @root
    
   end
-  
 
 end
+
+# sample code
+# d = DOMReader.new
+# tree = d.build_tree('test.html');
+# searcher = TreeSearcher.new(tree);
+# node = searcher.search_by(:name, "div");
+# renderer = NodeRenderer.new(tree);
+# renderer.render(node[1])

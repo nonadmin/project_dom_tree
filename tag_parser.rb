@@ -14,9 +14,11 @@ module TagParser
       end 
 
     end
-    
+
+    tag_data[:id] = tag_data[:id].join if tag_data[:id]
     tag_data[:classes] = tag_data.delete(:class) if tag_data.has_key?(:class)
     tag_data
+
   end
 
 
@@ -27,7 +29,7 @@ module TagParser
 
 
   def get_attributes(string)
-    string.scan(/\w*[=\s]+['|"][\w\s]+['|"]/)
+    string.scan(/\w*[=\s]+['|"][\w\s-]+['|"]/)
   end
 
 
@@ -40,17 +42,12 @@ module TagParser
   def get_attribute_values(string)
     values = string.match(/['|"](.*?)['|"]/)
     values = values.captures[0].split(" ")
-    if values.length == 1
-      return values[0]
-    else
-      return values
-    end
   end
 
 
-  def get_all_opening_tags(text)
+  def get_all_opening_tags(raw_data)
     # regex <\s*\w.*?> to return all start tags in text
-    text.scan(/<\s*\w.*?>/) 
+    raw_data.scan(/<\s*\w.*?>/) 
   end
 
 
@@ -84,17 +81,17 @@ module TagParser
   # returns the first instance of a tag, the match result is the tag and
   # everything it contains, the match group (match[1]) is just the contents of
   # the tag
-  def get_instance_of_tag(tag, search_text, nested_search = false)
+  def get_instance_of_tag(tag, raw_data, nested_tags = false)
     # issues come up with greedy vs non-greedy regex when running this search
     # and you need to determine if you're dealing with a tag that has siblings
     # (<li></li><li></li>) or nested children (<div><div></div></div>) of the same
     # element name, for now, will fail with nested children
     consecutive_regex = /<\s*#{tag}[^>]*>(.*?)<\s*\/\s*#{tag}>/m
     nested_regex = /<\s*#{tag}[^>]*>(.*)<\s*\/\s*#{tag}>/m
-    if nested_search
-      search_text.match(nested_regex)
+    if nested_tags
+      raw_data.match(nested_regex)
     else
-      search_text.match(consecutive_regex)
+      raw_data.match(consecutive_regex)
     end
   end
 
@@ -110,25 +107,29 @@ module TagParser
       # based on if these tags are siblings or nested
       if same_tags_at_start_of_data?(node.raw_data) &&
          nested_same_tag?(search_tag, node.raw_data)
-        # find all instances of the tag, including attributes and data
+        # find first instance of the tag, including attributes and data
         tag = get_instance_of_tag(search_tag, node.raw_data, true)
       else
         tag = get_instance_of_tag(search_tag, node.raw_data)
       end
 
-      # delete the tag from the raw_data and
-      # move it to raw_tags array for further processing
-      node.raw_child_tags << node.raw_data.slice!(tag[0])
+      # copy to raw_child_tags array for further processing
+      node.raw_child_tags << tag[0]
+
+      # leave a reference to the child so that if there's any text
+      # we can re-insert the child correctly if rebuilding or rendering
+      child_number = node.raw_child_tags.length
+      node.raw_data.gsub!(tag[0], "child_tag_#{child_number}")
     end
 
     # now all tags have been removed from raw_data
     # leaving only non-HTML text contained in the node
 
     # set the node's text to the remaining raw_data
-    node.text = node.raw_data.dup
+    node.data = node.raw_data.dup
     # clean up the text, remove extra white space, new lines
-    node.text.gsub!(/\s+/, " ")
-    node.text.strip!
+    node.data.gsub!(/\s+/, " ")
+    node.data.strip!
 
     # clear the raw data, its no longer needed
     node.raw_data = nil
